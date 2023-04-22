@@ -8,7 +8,7 @@ class Main {
 
 		do{
 			System.out.println("\nLink state routing\n");
-			System.out.println("Enter the number")
+			System.out.println("Enter the number");
 		}
     // System.out.println("Hello world!");
   }

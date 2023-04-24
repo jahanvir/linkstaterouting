@@ -85,7 +85,31 @@ class Graph{
 }
  //need to implement this
 class Dijsktra{
-	
+	private int[] dist, nextHop;
+	private PriorityQueue<Node> pq;
+	private ArrayList<ArrayList<Node>> adj;
+
+	void dijsktraAlgorithm(int start, Graph graph){
+		runDijisktraAlgorithm(start,graph);
+	}
+
+	private void runDijsktraAlgorithm(int start, Graph graph){
+		int numVertices = graph.getNumVertices();
+		adj = graph.getAdjacency();
+
+		dist = new int[numVertices];
+		Arrays.fill(dist,Integer.MAX_VALUE);
+
+		nextHop = new int[numVertices];
+		Arrays.fill(nextHop,-1);
+
+		dist[start]=0;
+
+		pq = new PriorityQueue<Node>();
+		pq.add(new Node(start,0));
+
+		//need to add more functions
+	}
 }
 
 class Main {

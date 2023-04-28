@@ -44,7 +44,7 @@ class Graph{
 			System.out.println("Link added");
 		}
 		else{
-			System.out.prinln("Link not added");
+			System.out.println("Link not added");
 		}
 	}
 	private void addEdgeToGraph(int source, int destination, int cost){
@@ -90,7 +90,7 @@ class Dijsktra{
 	private ArrayList<ArrayList<Node>> adj;
 
 	void dijsktraAlgorithm(int start, Graph graph){
-		runDijisktraAlgorithm(start,graph);
+		runDijsktraAlgorithm(start,graph);
 	}
 
 	private void runDijsktraAlgorithm(int start, Graph graph){
@@ -108,7 +108,148 @@ class Dijsktra{
 		pq = new PriorityQueue<Node>();
 		pq.add(new Node(start,0));
 
-		//need to add more functions
+		while(pq.size() > 0){
+			Node curr = pq.poll();
+			int currN = curr.val;
+
+			Iterator<Node> it = adj.get(currN).iterator();
+
+			while(it.hasNext()){
+				Node temp=it.next();
+
+				if(dist[temp.val] > dist[currN] + temp.cost){
+
+					pq.add(new Node(temp.val,dist[currN] + temp.cost));
+					dist[temp.val] = dist[currN] + temp.cost;
+					updateNextHop(start,currN,temp);
+				}
+			}
+		}
+	}
+
+	private void updateNextHop(int start, int currN, Node temp){
+		if(start != currN){
+			nextHop[temp.val] = currN;
+			if(nextHop[temp.val] != -1){
+				int tempNode = nextHop[nextHop[temp.val]];
+
+				while(tempNode != -1){
+					nextHop[temp.val] = nextHop[nextHop[temp.val]];
+					tempNode = nextHop[nextHop[temp.val]];
+				}
+			}
+		}
+	}
+
+	void printShortestPath(int start){
+		for(int i=0;i<dist.length;i++){
+			if(i!=start){
+				System.out.println(i+"\t"+((dist[i] == Integer.MAX_VALUE)?"No link":dist[i]+"\t"+((nextHop[i] == -1)?"- ":nextHop[i])+" "+"\t");
+			}
+		}
+	}
+
+	int[] getNextHop(){
+		return nextHop;
+	}
+
+	int[] getDist(){
+		return dist;
+	}
+
+}
+
+class RoutingTable{
+
+	private int routes,numRouters;
+	private int[] dist, nextHop;
+
+	RoutingTable(int router, int numRouters){
+		this.router = router;
+		this.numRouters = numRouters;
+		dist = new int[numRouters];
+		Arrays.fill(dist, Integer.MAX_VALUE);
+		nextHop = new int[numRouters];
+		Arrays.fill(nextHop, -1);
+	}
+
+	void setDist(int[] dist){
+		this.dist = dist;
+	}
+
+	void setNextHop(int[] nextHop){
+		this.nextHop = nextHop;
+	}
+
+	int[] getNextHop(){
+		return nextHop;
+	}
+
+	int[] getDist(){
+		return dist;
+	}
+
+	void printRoutingTable(){
+		for(int i=0; i<numRouters;i++){
+			if(i!=router){
+			 	System.out.println(i+"\t"+((dist[i] == Integer.MAX_VALUE)?"No Link": dist[i]+"\t")+
+													((nextHop[i] == -1)?"- ":nextHop[i])+" ")+"\t");
+			}
+		}
+	}
+	
+}
+
+class NetworkTopology{
+	Graph network;
+	int numRouters;
+	int numRoutersLinks;
+
+	Dijsktra d[];
+	RoutingTable routingTable[];
+
+	NetworkTopology(int numRouters, int numRouterLinks){
+
+		this.numRouters = numRouters;
+		this.numRouterLinks = numRouterLinks;
+
+		network = new Graph(numRouters, numRouterLinks);
+		routingTable = new RoutingTable[numRouters];
+
+		d = new dijsktra[numRouters];
+
+		for(int i=0; i<numRouters; i++){
+			d[i] = new Dijsktra();
+		}
+		
+	}
+
+	void addLink(int source, int destination, int cost){
+		network.addEdge(source,destination,cost);
+	}
+
+	void buildRoutingTables(){
+
+		for(int i=0;i,numrouters; i++){
+			d[i].dijsktraAlgorithm(i,network);
+			routingTable[i] = new RoutingTable(i,numRouters);
+			routingTable[i].setDist(d[i].getDist());
+			routingTable[i].setNextHop(d[i].getNextHop());
+		}
+	}
+
+	void printRoutingTables(){
+
+		for(int i=0;i<numrouters;i++){
+			System.out.println("\n--------------------------------------");
+			System.out.println("Routing Table for Router "+i);
+			System.out.println("\n--------------------------------------");
+			System.out.println("Node\tCost\tNext Hop");
+			routingTable[i].printRoutingTable();
+			System.out.println("\n--------------------------------------");
+			
+
+		}
 	}
 }
 
